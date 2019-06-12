@@ -34,7 +34,7 @@ defmodule PseudolocTest do
   end
 
   describe "localize_grapheme/2" do
-    test "returns the grapheme if there are no applicable alternatives" do
+    test "returns the grapheme if there are no applicable alternates" do
       assert Pseudoloc.localize_grapheme("a", %{}) == "a"
     end
 
@@ -44,20 +44,20 @@ defmodule PseudolocTest do
   end
 
   describe "localize_range/3" do
-    test "returns the string with the given range localized based on the alternatives" do
+    test "returns the string with the given range localized based on the alternates" do
       assert Pseudoloc.localize_range("foo", {0, 3}, %{"f" => ["ϝ"]}) == "ϝoo"
     end
   end
 
   describe "localize_string/2" do
-    test "returns the string localized based on the alternatives" do
-      alternatives = %{
+    test "returns the string localized based on the alternates" do
+      alternates = %{
         "a" => ["α"],
         "f" => ["ϝ"],
         "u" => ["ṵ"]
       }
 
-      assert Pseudoloc.localize_string("foo%{bar}baz%{quux}quuux", alternatives) ==
+      assert Pseudoloc.localize_string("foo%{bar}baz%{quux}quuux", alternates) ==
                "ϝoo%{bar}bαz%{quux}qṵṵṵx"
     end
   end

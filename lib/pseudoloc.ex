@@ -24,7 +24,7 @@ defmodule Pseudoloc do
   }
   ```
   """
-  @type alternatives :: %{optional(String.t()) => list(String.t())}
+  @type alternates :: %{optional(String.t()) => list(String.t())}
 
   @typedoc """
   Represents a range of text within a string by starting index and length.
@@ -69,11 +69,11 @@ defmodule Pseudoloc do
   end
 
   @doc """
-  Localizes the `grapheme` if there are valid `alternatives`.
+  Localizes the `grapheme` if there are valid `alternates`.
 
   ## Examples
 
-  Returns the grapheme unchanged if there are no alternatives:
+  Returns the grapheme unchanged if there are no alternates:
 
   ```
   iex> Pseudoloc.localize_grapheme("a", %{"b" => ["ḅ"]})
@@ -93,16 +93,16 @@ defmodule Pseudoloc do
   true
   ```
   """
-  @spec localize_grapheme(String.t(), alternatives) :: String.t()
-  def localize_grapheme(grapheme, alternatives) do
-    case Map.has_key?(alternatives, grapheme) do
+  @spec localize_grapheme(String.t(), alternates) :: String.t()
+  def localize_grapheme(grapheme, alternates) do
+    case Map.has_key?(alternates, grapheme) do
       false -> grapheme
-      true -> Enum.random(alternatives[grapheme])
+      true -> Enum.random(alternates[grapheme])
     end
   end
 
   @doc """
-  Localizes `text` within the `range` with the `alternatives`.
+  Localizes `text` within the `range` with the `alternates`.
 
   ## Examples
 
@@ -111,51 +111,51 @@ defmodule Pseudoloc do
   "fṓo"
   ```
   """
-  @spec localize_range(String.t(), range, alternatives) :: String.t()
-  def localize_range(text, range, alternatives)
+  @spec localize_range(String.t(), range, alternates) :: String.t()
+  def localize_range(text, range, alternates)
 
-  def localize_range(text, {_start, length}, _alternatives) when length <= 0, do: text
+  def localize_range(text, {_start, length}, _alternates) when length <= 0, do: text
 
-  def localize_range(text, {start, length}, alternatives) do
+  def localize_range(text, {start, length}, alternates) do
     range = Range.new(start, start + length - 1)
 
     {_, result} =
       Enum.reduce(range, {:cont, text}, fn elem, {_, text} ->
-        {:cont, localize_grapheme_at(text, elem, alternatives)}
+        {:cont, localize_grapheme_at(text, elem, alternates)}
       end)
 
     result
   end
 
   @doc """
-  Localizes `text` with the default alternatives.
+  Localizes `text` with the default alternates.
 
   See `localize_string/2` for details.
   """
   @spec localize_string(String.t()) :: String.t()
-  def localize_string(text), do: localize_string(text, default_alternatives())
+  def localize_string(text), do: localize_string(text, default_alternates())
 
   @doc """
-  Localizes `text` with the given `alternatives`.
+  Localizes `text` with the given `alternates`.
 
   ## Examples
 
   Localizing the non-interpolated sections of a string:
 
   ```
-  iex> alternatives = %{"a" => ["α"], "f" => ["ϝ"], "u" => ["ṵ"]}
+  iex> alternates = %{"a" => ["α"], "f" => ["ϝ"], "u" => ["ṵ"]}
   iex> text = "foo%{bar}baz%{quux}quuux"
-  iex> Pseudoloc.localize_string(text, alternatives)
+  iex> Pseudoloc.localize_string(text, alternates)
   "ϝoo%{bar}bαz%{quux}qṵṵṵx"
   ```
   """
-  @spec localize_string(String.t(), alternatives) :: String.t()
-  def localize_string(text, alternatives) do
+  @spec localize_string(String.t(), alternates) :: String.t()
+  def localize_string(text, alternates) do
     ranges = get_localizable_ranges(text)
 
     {_, result} =
       Enum.reduce(ranges, {:cont, text}, fn range, {_, text} ->
-        {:cont, localize_range(text, range, alternatives)}
+        {:cont, localize_range(text, range, alternates)}
       end)
 
     result
@@ -169,8 +169,8 @@ defmodule Pseudoloc do
     |> Enum.reject(fn elem -> match?({_, 0}, elem) end)
   end
 
-  defp default_alternatives do
-    {map, _} = Code.eval_file(Path.join(:code.priv_dir(:pseudoloc), "alternatives.exs"))
+  defp default_alternates do
+    {map, _} = Code.eval_file(Path.join(:code.priv_dir(:pseudoloc), "alternates.exs"))
 
     map
   end
@@ -194,10 +194,10 @@ defmodule Pseudoloc do
     do_get_ranges(text, start + length, tail, [{last_pos, start - last_pos} | translate_ranges])
   end
 
-  defp localize_grapheme_at(text, at, alternatives) do
+  defp localize_grapheme_at(text, at, alternates) do
     before_text = String.slice(text, 0, at)
     after_text = String.slice(text, at + 1, String.length(text))
 
-    Enum.join([before_text, localize_grapheme(String.at(text, at), alternatives), after_text])
+    Enum.join([before_text, localize_grapheme(String.at(text, at), alternates), after_text])
   end
 end
