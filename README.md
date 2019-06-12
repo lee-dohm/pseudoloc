@@ -1,5 +1,8 @@
 # Pseudoloc
 
+[![Build Status](https://travis-ci.com/lee-dohm/pseudoloc.svg?branch=master)](https://travis-ci.com/lee-dohm/pseudoloc)
+[![Ebert](https://ebertapp.io/github/lee-dohm/pseudoloc.svg)](https://ebertapp.io/github/lee-dohm/pseudoloc)
+
 A library and Mix task for [pseudolocalizing](https://en.wikipedia.org/wiki/Pseudolocalization) [Gettext](https://hexdocs.pm/gettext/Gettext.html) data files.
 
 ## Installation
