@@ -61,4 +61,11 @@ defmodule PseudolocTest do
                "ϝoo%{bar}bαz%{quux}qṵṵṵx"
     end
   end
+
+  describe "localize_string/1" do
+    test "returns the string localized based on the default alternates" do
+      assert Pseudoloc.localize_string("foo%{bar}baz%{quux}quuux") ==
+               "ϝṓṓ%{bar}ḅαẓ%{quux}ʠṵṵṵẋ"
+    end
+  end
 end

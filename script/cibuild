@@ -13,4 +13,9 @@ script/bootstrap
 echo "==> App is now ready to go!"
 
 mix format --check-formatted
-mix test
+
+if [ -n "$TRAVIS" ]; then
+  mix coveralls.travis
+else
+  mix test
+fi
