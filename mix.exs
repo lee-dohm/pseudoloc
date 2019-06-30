@@ -6,13 +6,15 @@ defmodule Pseudoloc.MixProject do
   def project do
     [
       app: :pseudoloc,
+      description: "A library and Mix task for pseudolocalizing Gettext translation files",
       version: @version,
       elixir: "~> 1.8",
       start_permanent: Mix.env() == :prod,
       test_coverage: [tool: ExCoveralls],
       preferred_cli_env: [coveralls: :test],
       deps: deps(),
-      docs: docs()
+      docs: docs(),
+      package: package()
     ]
   end
 
@@ -48,6 +50,14 @@ defmodule Pseudoloc.MixProject do
           title: "License"
         ]
       ]
+    ]
+  end
+
+  defp package do
+    [
+      licenses: ["MIT"],
+      maintainers: ["Lee Dohm"],
+      links: %{"GitHub" => "https://github.com/lee-dohm/pseudoloc"}
     ]
   end
 end
